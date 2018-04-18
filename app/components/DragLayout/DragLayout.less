@@ -1,0 +1,14 @@
+@import "~antd/lib/style/themes/default.less";
+
+.DragLayout {
+  position: relative;
+  overflow: hidden;
+  // border-radius属性设置请勿删, 否则会造成scale后模糊
+  div {
+    border-radius: initial !important;
+  }
+  .overlapLines {
+    border: 1px dashed @primary-4;
+    position: absolute;
+  }
+}

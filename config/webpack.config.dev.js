@@ -15,26 +15,34 @@ module.exports = {
       styles: path.join(__dirname, '../app/styles'),
       utils: path.join(__dirname, '../app/utils')
     },
-    extensions: ['', '.js', '.jsx', '.less']
+    extensions: ['.js', '.jsx', '.less']
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel-loader',
-        query: {
-          presets: ['es2015', 'react', 'stage-0'],
-          plugins: [
-            ['transform-decorators-legacy']
-          ]
-        }
+        use: [{
+          loader: 'babel-loader',
+          options: {
+            presets: ['es2015', 'react', 'stage-0'],
+            plugins: ['transform-decorators-legacy']
+          }
+        }]
       }, {
         test: /\.less$/,
-        loader: 'style!css!less'
+        exclude: /node_modules/,
+        use: [
+          { loader: 'style-loader' },
+          { loader: 'css-loader' },
+          { loader: 'less-loader' }
+        ]
       }, {
         test: /\.css$/,
-        loader: 'style!css'
+        use: [
+          { loader: 'style-loader' },
+          { loader: 'css-loader' }
+        ]
       }
     ]
   },
@@ -44,5 +52,6 @@ module.exports = {
     port: 3333,
     inline: true
   },
+  mode: 'development',
   devtool: 'cheap-module-source-map'
 }

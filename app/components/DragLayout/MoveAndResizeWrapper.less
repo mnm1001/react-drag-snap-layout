@@ -1,0 +1,101 @@
+.MoveAndResizeWrapper {
+  position: absolute;
+  border: 1px solid transparent;
+  outline: 0;
+  &.selected {
+    z-index: 1;
+  }
+  &.isDragging {
+    z-index: 2;
+  }
+  &.selected .resizeHandle {
+    display: block;
+  }
+  &.selected, &.selected:hover {
+    border-color: #A6A6A6;
+  }
+  &:hover {
+    border-color: #EAEAEA;
+  }
+}
+
+.noDrag .resizeHandle {
+  display: none !important;
+}
+
+.resizeHandle {
+	position: absolute;
+	width: 10px;
+	height: 10px;
+	box-sizing: border-box;
+	display: none;
+	touch-action: none
+}
+
+.resizeHandle[data-direction=up] {
+	left: 50%;
+	top: -1px;
+	margin-left: -6px;
+	width: 12px;
+	border-top: 4px solid #999;
+	cursor: n-resize!important
+}
+
+.resizeHandle[data-direction=left] {
+	left: -1px;
+	top: 50%;
+	margin-top: -6px;
+	height: 12px;
+	border-left: 4px solid #999;
+	cursor: w-resize!important
+}
+
+.resizeHandle[data-direction=down] {
+	left: 50%;
+	bottom: -1px;
+	margin-left: -6px;
+	width: 12px;
+	border-bottom: 4px solid #999;
+	cursor: s-resize!important
+}
+
+.resizeHandle[data-direction=right] {
+	right: -1px;
+	top: 50%;
+	margin-top: -6px;
+	height: 12px;
+	border-right: 4px solid #999;
+	cursor: e-resize!important
+}
+
+.resizeHandle[data-direction=up-right] {
+	right: -1px;
+	top: -1px;
+	border-right: 4px solid #999;
+	border-top: 4px solid #999;
+	cursor: ne-resize!important
+}
+
+.resizeHandle[data-direction=up-left] {
+	left: -1px;
+	top: -1px;
+	border-left: 4px solid #999;
+	border-top: 4px solid #999;
+	cursor: nw-resize!important
+}
+
+.resizeHandle[data-direction=down-left] {
+	left: -1px;
+	bottom: -1px;
+	border-left: 4px solid #999;
+	border-bottom: 4px solid #999;
+	cursor: sw-resize!important
+}
+
+.resizeHandle[data-direction=down-right] {
+	right: -1px;
+	bottom: -1px;
+	border-right: 4px solid #999;
+	border-bottom: 4px solid #999;
+	cursor: se-resize!important
+}
