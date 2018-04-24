@@ -5,13 +5,13 @@ export const addMoveListener = (wrapperDom, dragHandleClassName, wrapperDomOptio
   const handleDom = getChildDomByClassName(wrapperDom, dragHandleClassName)
   const { layoutWidth, layoutHeight } = layoutOption
   const { onChangePosition, onStartDragging, onEndDragging, onChangeOverlapLines } = funcCallBack
-  const { scale, dragId } = wrapperDomOption
+  const { scale, id } = wrapperDomOption
 
   handleDom.onmousedown = () => {
     const oldEvent = window.event
     const oldPosition = getDomPosition(wrapperDom, scale)
     const linesArray = getSiblingElementsLines(wrapperDom, scale)
-    onStartDragging(dragId)
+    onStartDragging(id)
     document.onmousemove = (newEvent) => {
       newEvent.preventDefault()
       const mouseMoveX = (newEvent.clientX - oldEvent.clientX) / scale
@@ -32,10 +32,10 @@ export const addMoveListener = (wrapperDom, dragHandleClassName, wrapperDomOptio
       wrapperDom.style.top = `${newDomTop * scale}px`
 
       changeOverlapLines(linesArray, oldPosition.width, oldPosition.height, newDomLeft, newDomTop, onChangeOverlapLines)
-      onChangePosition(dragId, {width: oldPosition.width, height: oldPosition.height, left: newDomLeft, top: newDomTop})
+      onChangePosition(id, {width: oldPosition.width, height: oldPosition.height, left: newDomLeft, top: newDomTop})
     }
     document.onmouseup = () => {
-      documentMouseUp(dragId, onEndDragging, onChangeOverlapLines)
+      documentMouseUp(id, onEndDragging, onChangeOverlapLines)
     }
   }
 }
@@ -43,14 +43,14 @@ export const addMoveListener = (wrapperDom, dragHandleClassName, wrapperDomOptio
 export const addResizeListener = (dragDom, resizeHandleDom, wrapperDomOption, layoutOption, funcCallBack) => {
   const resizeHandlePosition = resizeHandleDom.getAttribute('data-direction')
   const { onChangePosition, onStartDragging, onEndDragging, onChangeOverlapLines } = funcCallBack
-  const { scale, dragId } = wrapperDomOption
+  const { scale, id } = wrapperDomOption
 
   resizeHandleDom.onmousedown = (e) => {
     e.stopPropagation()
     const oldEvent = window.event
     const oldPosition = getDomPosition(dragDom, scale)
     const linesArray = getSiblingElementsLines(dragDom, scale)
-    onStartDragging(dragId)
+    onStartDragging(id)
     document.onmousemove = (newEvent) => {
       newEvent.preventDefault()
       newEvent.stopPropagation()
@@ -89,11 +89,11 @@ export const addResizeListener = (dragDom, resizeHandleDom, wrapperDomOption, la
       dragDom.style.top = `${newDomTop * scale}px`
 
       changeOverlapLines(linesArray, newDomWidth, newDomHeight, newDomLeft, newDomTop, onChangeOverlapLines)
-      onChangePosition(dragId, {width: newDomWidth, height: newDomHeight, left: newDomLeft, top: newDomTop})
+      onChangePosition(id, {width: newDomWidth, height: newDomHeight, left: newDomLeft, top: newDomTop})
     }
     document.onmouseup = (e) => {
       e.stopPropagation()
-      documentMouseUp(dragId, onEndDragging, onChangeOverlapLines)
+      documentMouseUp(id, onEndDragging, onChangeOverlapLines)
     }
   }
 }
@@ -201,8 +201,8 @@ const changeOverlapLines = (linesArray, width, height, left, top, onChangeOverla
   onChangeOverlapLines({x: overlapLinesX, y: overlapLinesY})
 }
 
-const documentMouseUp = (dragId, onEndDragging, onChangeOverlapLines) => {
-  onEndDragging(dragId)
+const documentMouseUp = (id, onEndDragging, onChangeOverlapLines) => {
+  onEndDragging(id)
   onChangeOverlapLines({x: [], y: []})
   document.onmousemove = null
   document.onmouseup = null

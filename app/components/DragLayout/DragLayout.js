@@ -1,17 +1,18 @@
-import React, { Component, PropTypes } from 'react'
+import React, { PureComponent } from 'react'
 import classNames from 'classnames'
+import PropTypes from 'prop-types'
 import { map, isEmpty } from 'lodash'
 import MoveAndResizeWrapper from './MoveAndResizeWrapper'
 import './DragLayout.less'
 
-export default class DragLayout extends Component {
+export default class DragLayout extends PureComponent {
   static propTypes = {
-    children: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+    children: PropTypes.array,
     style: PropTypes.object,
-    width: PropTypes.number,
-    height: PropTypes.number,
-    childMinWidth: PropTypes.number,
-    childMinHeight: PropTypes.number,
+    layoutWidth: PropTypes.number,
+    layoutHeight: PropTypes.number,
+    itemMinWidth: PropTypes.number,
+    itemMinHeight: PropTypes.number,
     onChangePosition: PropTypes.func,
     dragHandleClassName: PropTypes.string,
     canDrag: PropTypes.bool,
@@ -20,16 +21,15 @@ export default class DragLayout extends Component {
     onEndDragging: PropTypes.func,
     onLayoutClick: PropTypes.func,
     scale: PropTypes.number,
-    selectedItem: PropTypes.string
   }
 
   static defaultProps = {
-    canDrag: true,
     scale: 1,
-    width: 800,
-    height: 600,
-    childMinWidth: 0,
-    childMinHeight: 0,
+    canDrag: true,
+    layoutWidth: 800,
+    layoutHeight: 600,
+    itemMinWidth: 30,
+    itemMinHeight: 30,
     onChangePosition: () => {},
     onSelect: () => {},
     onStartDragging: () => {},
@@ -43,83 +43,89 @@ export default class DragLayout extends Component {
     this.handleChangeOverlapLines = this.handleChangeOverlapLines.bind(this)
     this.state = {
       overlapLines: {x: [], y: []},
-      isDragging: ''
+      selectedId: '',
+      draggingId: ''
     }
   }
 
-  handleStartDragging(dragId) {
-    this.setState({isDragging: dragId})
-    this.props.onStartDragging(dragId)
+  handleStartDragging(id) {
+    this.setState({draggingId: id})
+    this.props.onStartDragging(id)
   }
 
-  handleEndDragging(dragId) {
-    this.setState({isDragging: ''})
-    this.props.onEndDragging(dragId)
+  handleEndDragging(id) {
+    this.setState({draggingId: ''})
+    this.props.onEndDragging(id)
   }
 
   handleChangeOverlapLines(overlapLines) {
     this.setState({overlapLines})
   }
 
+  handleSelect = (selectedId) => {
+    this.setState({
+      selectedId
+    })
+    this.props.onSelect(selectedId)
+  }
+
   render() {
-    const { width, height, childMinWidth, canDrag, childMinHeight, scale, style, selectedItem } = this.props
-    const { isDragging } = this.state
+    const { layoutWidth, layoutHeight, itemMinWidth, canDrag, itemMinHeight, scale, style, dragHandleClassName, onChangePosition } = this.props
+    const { draggingId, selectedId } = this.state
     const children = React.Children.toArray(this.props.children)
-    const dragLayoutStyle = {width: width * scale, height: height * scale, ...style}
+    const dragLayoutStyle = {width: layoutWidth * scale, height: layoutHeight * scale, ...style}
+    
     return (
       <div className={`DragLayout ${classNames({noDrag: !canDrag})}`} style={dragLayoutStyle} onClick={this.props.onLayoutClick}>
-        {map(children, (child) =>
-          <MoveAndResizeWrapper
-            scale={scale}
-            isDragging={isDragging === child.props.dragId}
-            isSelected={selectedItem === child.props.dragId}
-            onSelect={this.props.onSelect}
-            dragHandleClassName={this.props.dragHandleClassName}
-            onStartDragging={this.handleStartDragging}
-            onEndDragging={this.handleEndDragging}
-            onChangePosition={this.props.onChangePosition}
-            key={child.props.dragId}
-            canDrag={canDrag}
-            onChangeOverlapLines={this.handleChangeOverlapLines}
-            dragId={child.props.dragId}
-            position={child.props.position}
-            layoutWidth={width}
-            layoutHeight={height}
-            minWidth={childMinWidth}
-            minHeight={childMinHeight}
-          >
-            {child}
-          </MoveAndResizeWrapper>
-        )}
+        {map(children, (child) => {
+          return React.cloneElement(
+            child,
+            {
+              scale,
+              canDrag,
+              isDragging: draggingId === child.props.id,
+              isSelected: selectedId === child.props.id,
+              dragHandleClassName,
+              onSelect: this.handleSelect,
+              onStartDragging: this.handleStartDragging,
+              onEndDragging: this.handleEndDragging,
+              onChangePosition,
+              onChangeOverlapLines: this.handleChangeOverlapLines,
+              layoutWidth,
+              layoutHeight,
+              minWidth: itemMinWidth,
+              minHeight: itemMinHeight
+            },
+          )
+        })}
         {this.renderOverlapLines()}
       </div>
     )
   }
 
   renderOverlapLines() {
-    const { width, height, scale } = this.props
-    const { overlapLines, isDragging} = this.state
-
-    if (isEmpty(isDragging)) return false
+    const { layoutWidth, layoutHeight, scale } = this.props
+    const { overlapLines, draggingId} = this.state
 
     const linesX = map(overlapLines.x, (line, index) => (
       <div
         key={index}
-        className='overlapLines'
-        style={{width: '0px', height: `${height}px`, left: `${line * scale}px`}}
+        className='overlapLine'
+        style={{width: '0px', height: `${layoutHeight}px`, left: `${line * scale}px`}}
       >
       </div>
     ))
     const linesY = map(overlapLines.y, (line, index) => (
       <div
         key={index}
-        className='overlapLines'
-        style={{width: `${width}px`, height: '0px', top: `${line * scale}px`}}
+        className='overlapLine'
+        style={{width: `${layoutWidth}px`, height: '0px', top: `${line * scale}px`}}
       >
       </div>
     ))
+    
     return (
-      <div>
+      <div className='overlapLines'>
         {linesX}
         {linesY}
       </div>

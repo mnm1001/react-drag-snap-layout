@@ -1,5 +1,6 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
 import { findDOMNode } from 'react-dom'
+import PropTypes from 'prop-types'
 import { addMoveListener, addResizeListener, getDomPosition, movePositionLimited } from './DragLayoutService'
 import { resizeHandlePosition } from './DragLayoutConstants'
 import './MoveAndResizeWrapper.less'
@@ -8,23 +9,23 @@ import classNames from 'classnames'
 
 export default class MoveAndResizeWrapper extends Component {
   static propTypes = {
-    children: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+    children: PropTypes.object,
     layoutWidth: PropTypes.number,
     layoutHeight: PropTypes.number,
     minWidth: PropTypes.number,
     scale: PropTypes.number,
     minHeight: PropTypes.number,
-    onChangeOverlapLines: PropTypes.func.isRequired,
+    onChangeOverlapLines: PropTypes.func,
     onChangePosition: PropTypes.func,
     position: PropTypes.object,
     canDrag: PropTypes.bool,
-    onSelect: PropTypes.func.isRequired,
-    isDragging: PropTypes.bool.isRequired,
-    isSelected: PropTypes.bool.isRequired,
+    onSelect: PropTypes.func,
+    isDragging: PropTypes.bool,
+    isSelected: PropTypes.bool,
     onStartDragging: PropTypes.func,
     onEndDragging: PropTypes.func,
     dragHandleClassName: PropTypes.string,
-    dragId: PropTypes.string.isRequired
+    id: PropTypes.string.isRequired
   }
 
   static defaultProps = {
@@ -38,10 +39,10 @@ export default class MoveAndResizeWrapper extends Component {
   }
 
   componentDidMount() {
-    const { scale, canDrag, dragId, dragHandleClassName, minWidth, minHeight, onChangePosition, layoutWidth, layoutHeight, onStartDragging, onEndDragging, onChangeOverlapLines } = this.props
+    const { scale, canDrag, id, dragHandleClassName, minWidth, minHeight, onChangePosition, layoutWidth, layoutHeight, onStartDragging, onEndDragging, onChangeOverlapLines } = this.props
     if (canDrag) {
       const layoutOption = { layoutWidth, layoutHeight }
-      const wrapperDomOption = { minWidth, minHeight, scale, dragId }
+      const wrapperDomOption = { minWidth, minHeight, scale, id }
       const funcCallBack = { onChangePosition, onStartDragging, onEndDragging, onChangeOverlapLines }
 
       addMoveListener(findDOMNode(this), dragHandleClassName, wrapperDomOption, layoutOption, funcCallBack)
@@ -52,11 +53,11 @@ export default class MoveAndResizeWrapper extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { scale, canDrag, dragId, dragHandleClassName, minWidth, minHeight, layoutWidth, layoutHeight, onStartDragging, onEndDragging, onChangePosition, onChangeOverlapLines } = nextProps
+    const { scale, canDrag, id, dragHandleClassName, minWidth, minHeight, layoutWidth, layoutHeight, onStartDragging, onEndDragging, onChangePosition, onChangeOverlapLines } = nextProps
 
     if (canDrag && this.props.scale !== scale) {
       const layoutOption = { layoutWidth, layoutHeight }
-      const wrapperDomOption = { minWidth, minHeight, scale, dragId }
+      const wrapperDomOption = { minWidth, minHeight, scale, id }
       const funcCallBack = { onChangePosition, onStartDragging, onEndDragging, onChangeOverlapLines }
 
       addMoveListener(findDOMNode(this), dragHandleClassName, wrapperDomOption, layoutOption, funcCallBack)
@@ -71,7 +72,7 @@ export default class MoveAndResizeWrapper extends Component {
     if (!isArrowKey) return
 
     event.preventDefault()
-    const { canDrag, onChangePosition, dragId, layoutWidth, layoutHeight, scale } = this.props
+    const { canDrag, onChangePosition, id, layoutWidth, layoutHeight, scale } = this.props
     if (!canDrag) return
 
     const wrapperDom = findDOMNode(this)
@@ -98,19 +99,19 @@ export default class MoveAndResizeWrapper extends Component {
     wrapperDom.style.left = `${newDomLeft}px`
     wrapperDom.style.top = `${newDomTop}px`
 
-    onChangePosition(dragId, {width: oldPosition.width, height: oldPosition.height, left: newDomLeft / scale, top: newDomTop / scale})
+    onChangePosition(id, {width: oldPosition.width, height: oldPosition.height, left: newDomLeft / scale, top: newDomTop / scale})
   }
 
   handleSelect(e) {
     e.stopPropagation()
-    const { dragId } = this.props
-    this.props.onSelect(dragId)
+    const { id } = this.props
+    this.props.onSelect(id)
   }
 
   render() {
     const { position, isSelected, scale, isDragging } = this.props
     const { width, height, left, top } = position
-
+    
     const moveAndResizeWrapperStyle = {
       width,
       height,
