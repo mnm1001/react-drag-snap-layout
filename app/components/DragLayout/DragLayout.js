@@ -53,7 +53,7 @@ export default class DragLayout extends PureComponent {
   }
 
   handleEndDragging(id) {
-    this.setState({draggingId: ''})
+    this.setState({ draggingId: '' })
     this.props.onEndDragging(id)
   }
 
@@ -66,9 +66,11 @@ export default class DragLayout extends PureComponent {
       selectedId
     })
     this.props.onSelect(selectedId)
-  }
+  } 
 
   handleLayoutClick = () => {
+    const { isDragging } = this.state
+
     this.setState({
       selectedId: ''
     })
