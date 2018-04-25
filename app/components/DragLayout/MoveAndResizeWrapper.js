@@ -18,7 +18,7 @@ export default class MoveAndResizeWrapper extends Component {
     onChangeOverlapLines: PropTypes.func,
     onChangePosition: PropTypes.func,
     position: PropTypes.object,
-    canDrag: PropTypes.bool,
+    disableDrag: PropTypes.bool,
     onSelect: PropTypes.func,
     isDragging: PropTypes.bool,
     isSelected: PropTypes.bool,
@@ -39,8 +39,8 @@ export default class MoveAndResizeWrapper extends Component {
   }
 
   componentDidMount() {
-    const { scale, canDrag, id, dragHandleClassName, minWidth, minHeight, onChangePosition, layoutWidth, layoutHeight, onStartDragging, onEndDragging, onChangeOverlapLines } = this.props
-    if (canDrag) {
+    const { scale, disableDrag, id, dragHandleClassName, minWidth, minHeight, onChangePosition, layoutWidth, layoutHeight, onStartDragging, onEndDragging, onChangeOverlapLines } = this.props
+    if (!disableDrag) {
       const layoutOption = { layoutWidth, layoutHeight }
       const wrapperDomOption = { minWidth, minHeight, scale, id }
       const funcCallBack = { onChangePosition, onStartDragging, onEndDragging, onChangeOverlapLines }
@@ -53,9 +53,9 @@ export default class MoveAndResizeWrapper extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { scale, canDrag, id, dragHandleClassName, minWidth, minHeight, layoutWidth, layoutHeight, onStartDragging, onEndDragging, onChangePosition, onChangeOverlapLines } = nextProps
+    const { scale, disableDrag, id, dragHandleClassName, minWidth, minHeight, layoutWidth, layoutHeight, onStartDragging, onEndDragging, onChangePosition, onChangeOverlapLines } = nextProps
 
-    if (canDrag && this.props.scale !== scale) {
+    if (!disableDrag && this.props.scale !== scale) {
       const layoutOption = { layoutWidth, layoutHeight }
       const wrapperDomOption = { minWidth, minHeight, scale, id }
       const funcCallBack = { onChangePosition, onStartDragging, onEndDragging, onChangeOverlapLines }
@@ -72,8 +72,8 @@ export default class MoveAndResizeWrapper extends Component {
     if (!isArrowKey) return
 
     event.preventDefault()
-    const { canDrag, onChangePosition, id, layoutWidth, layoutHeight, scale } = this.props
-    if (!canDrag) return
+    const { disableDrag, onChangePosition, id, layoutWidth, layoutHeight, scale } = this.props
+    if (disableDrag) return
 
     const wrapperDom = findDOMNode(this)
     const oldPosition = getDomPosition(wrapperDom, scale)

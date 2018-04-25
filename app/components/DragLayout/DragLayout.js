@@ -15,17 +15,16 @@ export default class DragLayout extends PureComponent {
     itemMinHeight: PropTypes.number,
     onChangePosition: PropTypes.func,
     dragHandleClassName: PropTypes.string,
-    canDrag: PropTypes.bool,
+    disableDrag: PropTypes.bool,
     onSelect: PropTypes.func.isRequired,
     onStartDragging: PropTypes.func,
     onEndDragging: PropTypes.func,
-    onLayoutClick: PropTypes.func,
     scale: PropTypes.number,
   }
 
   static defaultProps = {
     scale: 1,
-    canDrag: true,
+    disableDrag: false,
     layoutWidth: 800,
     layoutHeight: 600,
     itemMinWidth: 30,
@@ -69,20 +68,26 @@ export default class DragLayout extends PureComponent {
     this.props.onSelect(selectedId)
   }
 
+  handleLayoutClick = () => {
+    this.setState({
+      selectedId: ''
+    })
+  }
+
   render() {
-    const { layoutWidth, layoutHeight, itemMinWidth, canDrag, itemMinHeight, scale, style, dragHandleClassName, onChangePosition } = this.props
+    const { layoutWidth, layoutHeight, itemMinWidth, disableDrag, itemMinHeight, scale, style, dragHandleClassName, onChangePosition } = this.props
     const { draggingId, selectedId } = this.state
     const children = React.Children.toArray(this.props.children)
     const dragLayoutStyle = {width: layoutWidth * scale, height: layoutHeight * scale, ...style}
     
     return (
-      <div className={`DragLayout ${classNames({noDrag: !canDrag})}`} style={dragLayoutStyle} onClick={this.props.onLayoutClick}>
+      <div className={`DragLayout ${classNames({disableDrag})}`} style={dragLayoutStyle} onClick={this.handleLayoutClick}>
         {map(children, (child) => {
           return React.cloneElement(
             child,
             {
               scale,
-              canDrag,
+              disableDrag,
               isDragging: draggingId === child.props.id,
               isSelected: selectedId === child.props.id,
               dragHandleClassName,
