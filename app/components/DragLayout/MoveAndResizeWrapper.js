@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
-import { findDOMNode } from 'react-dom'
 import PropTypes from 'prop-types'
+import { map, forEach, includes } from 'lodash'
+import classNames from 'classnames'
 import { addMoveListener, addResizeListener, getDomPosition, movePositionLimited } from './DragLayoutService'
 import { resizeHandlePosition } from './DragLayoutConstants'
 import './MoveAndResizeWrapper.less'
-import { map, forEach, includes } from 'lodash'
-import classNames from 'classnames'
 
 export default class MoveAndResizeWrapper extends Component {
   static propTypes = {
@@ -29,7 +28,7 @@ export default class MoveAndResizeWrapper extends Component {
   }
 
   static defaultProps = {
-    position: {width: 100, height: 100, left: 0, top: 0}
+    position: { width: 100, height: 100, left: 0, top: 0 }
   }
 
   constructor(props) {
@@ -45,9 +44,9 @@ export default class MoveAndResizeWrapper extends Component {
       const wrapperDomOption = { minWidth, minHeight, scale, id }
       const funcCallBack = { onChangePosition, onStartDragging, onEndDragging, onChangeOverlapLines }
 
-      addMoveListener(findDOMNode(this), dragHandleClassName, wrapperDomOption, layoutOption, funcCallBack)
+      addMoveListener(this.node, dragHandleClassName, wrapperDomOption, layoutOption, funcCallBack)
       forEach(resizeHandlePosition, positionHandler => {
-        addResizeListener(findDOMNode(this), this.refs[positionHandler], wrapperDomOption, layoutOption, funcCallBack)
+        addResizeListener(this.node, this.refs[positionHandler], wrapperDomOption, layoutOption, funcCallBack)
       })
     }
   }
@@ -60,9 +59,9 @@ export default class MoveAndResizeWrapper extends Component {
       const wrapperDomOption = { minWidth, minHeight, scale, id }
       const funcCallBack = { onChangePosition, onStartDragging, onEndDragging, onChangeOverlapLines }
 
-      addMoveListener(findDOMNode(this), dragHandleClassName, wrapperDomOption, layoutOption, funcCallBack)
+      addMoveListener(this.node, dragHandleClassName, wrapperDomOption, layoutOption, funcCallBack)
       forEach(resizeHandlePosition, positionHandler => {
-        addResizeListener(findDOMNode(this), this.refs[positionHandler], wrapperDomOption, layoutOption, funcCallBack)
+        addResizeListener(this.node, this.refs[positionHandler], wrapperDomOption, layoutOption, funcCallBack)
       })
     }
   }
@@ -75,23 +74,28 @@ export default class MoveAndResizeWrapper extends Component {
     const { disableDrag, onChangePosition, id, layoutWidth, layoutHeight, scale } = this.props
     if (disableDrag) return
 
-    const wrapperDom = findDOMNode(this)
+    const wrapperDom = this.node
+
     const oldPosition = getDomPosition(wrapperDom, scale)
     const moveGap = 1
     let newDomLeft = oldPosition.left * scale
     let newDomTop = oldPosition.top * scale
 
-    if (event.keyCode === 37)
+    if (event.keyCode === 37) {
       newDomLeft = newDomLeft - moveGap
+    }
 
-    if (event.keyCode === 38)
+    if (event.keyCode === 38) {
       newDomTop = newDomTop - moveGap
+    }
 
-    if (event.keyCode === 39)
+    if (event.keyCode === 39) {
       newDomLeft = newDomLeft + moveGap
+    }
 
-    if (event.keyCode === 40)
+    if (event.keyCode === 40) {
       newDomTop = newDomTop + moveGap
+    }
 
     newDomLeft = movePositionLimited(newDomLeft, oldPosition.width * scale, layoutWidth * scale)
     newDomTop = movePositionLimited(newDomTop, oldPosition.height * scale, layoutHeight * scale)
@@ -99,7 +103,7 @@ export default class MoveAndResizeWrapper extends Component {
     wrapperDom.style.left = `${newDomLeft}px`
     wrapperDom.style.top = `${newDomTop}px`
 
-    onChangePosition(id, {width: oldPosition.width, height: oldPosition.height, left: newDomLeft / scale, top: newDomTop / scale})
+    onChangePosition(id, { width: oldPosition.width, height: oldPosition.height, left: newDomLeft / scale, top: newDomTop / scale })
   }
 
   handleSelect(e) {
@@ -111,7 +115,7 @@ export default class MoveAndResizeWrapper extends Component {
   render() {
     const { position, isSelected, scale, isDragging } = this.props
     const { width, height, left, top } = position
-    
+
     const moveAndResizeWrapperStyle = {
       width,
       height,
@@ -123,22 +127,21 @@ export default class MoveAndResizeWrapper extends Component {
 
     return (
       <div
-        className={`MoveAndResizeWrapper ${classNames({selected: isSelected, isDragging})}`}
-        onClick={this.handleSelect}
+        className={`MoveAndResizeWrapper ${classNames({ selected: isSelected, isDragging })}`}
+        onMouseDown={this.handleSelect}
         style={moveAndResizeWrapperStyle}
         onKeyDown={this.handleKeyDown}
         tabIndex={0}
+        ref={node => { this.node = node }}
       >
         {this.props.children}
         {map(resizeHandlePosition, (positionHandler) =>
-          <div
+          (<div
             key={positionHandler}
             className='resizeHandle'
             data-direction={positionHandler}
             ref={positionHandler}
-          >
-          </div>
-        )}
+          />))}
       </div>
     )
   }

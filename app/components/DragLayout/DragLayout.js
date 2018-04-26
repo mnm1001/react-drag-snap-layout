@@ -1,13 +1,12 @@
 import React, { PureComponent } from 'react'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
-import { map, isEmpty } from 'lodash'
-import MoveAndResizeWrapper from './MoveAndResizeWrapper'
+import { map } from 'lodash'
 import './DragLayout.less'
 
 export default class DragLayout extends PureComponent {
   static propTypes = {
-    children: PropTypes.array,
+    children: PropTypes.array.isRequired,
     style: PropTypes.object,
     layoutWidth: PropTypes.number,
     layoutHeight: PropTypes.number,
@@ -16,14 +15,16 @@ export default class DragLayout extends PureComponent {
     onChangePosition: PropTypes.func,
     dragHandleClassName: PropTypes.string,
     disableDrag: PropTypes.bool,
-    onSelect: PropTypes.func.isRequired,
+    onSelect: PropTypes.func,
     onStartDragging: PropTypes.func,
     onEndDragging: PropTypes.func,
-    scale: PropTypes.number,
+    scale: PropTypes.number
   }
 
   static defaultProps = {
     scale: 1,
+    style: {},
+    dragHandleClassName: '',
     disableDrag: false,
     layoutWidth: 800,
     layoutHeight: 600,
@@ -41,14 +42,14 @@ export default class DragLayout extends PureComponent {
     this.handleEndDragging = this.handleEndDragging.bind(this)
     this.handleChangeOverlapLines = this.handleChangeOverlapLines.bind(this)
     this.state = {
-      overlapLines: {x: [], y: []},
+      overlapLines: { x: [], y: [] },
       selectedId: '',
       draggingId: ''
     }
   }
 
   handleStartDragging(id) {
-    this.setState({draggingId: id})
+    this.setState({ draggingId: id })
     this.props.onStartDragging(id)
   }
 
@@ -58,7 +59,7 @@ export default class DragLayout extends PureComponent {
   }
 
   handleChangeOverlapLines(overlapLines) {
-    this.setState({overlapLines})
+    this.setState({ overlapLines })
   }
 
   handleSelect = (selectedId) => {
@@ -66,24 +67,49 @@ export default class DragLayout extends PureComponent {
       selectedId
     })
     this.props.onSelect(selectedId)
-  } 
+  }
 
   handleLayoutClick = () => {
-    const { isDragging } = this.state
-
     this.setState({
       selectedId: ''
     })
+  }
+
+  renderOverlapLines() {
+    const { layoutWidth, layoutHeight, scale } = this.props
+    const { overlapLines } = this.state
+
+    const linesX = map(overlapLines.x, (line, index) => (
+      <div
+        key={index}
+        className='overlapLine'
+        style={{ width: '0px', height: `${layoutHeight}px`, left: `${line * scale}px` }}
+      />
+    ))
+    const linesY = map(overlapLines.y, (line, index) => (
+      <div
+        key={index}
+        className='overlapLine'
+        style={{ width: `${layoutWidth}px`, height: '0px', top: `${line * scale}px` }}
+      />
+    ))
+
+    return (
+      <div className='overlapLines'>
+        {linesX}
+        {linesY}
+      </div>
+    )
   }
 
   render() {
     const { layoutWidth, layoutHeight, itemMinWidth, disableDrag, itemMinHeight, scale, style, dragHandleClassName, onChangePosition } = this.props
     const { draggingId, selectedId } = this.state
     const children = React.Children.toArray(this.props.children)
-    const dragLayoutStyle = {width: layoutWidth * scale, height: layoutHeight * scale, ...style}
-    
+    const dragLayoutStyle = { width: layoutWidth * scale, height: layoutHeight * scale, ...style }
+
     return (
-      <div className={`DragLayout ${classNames({disableDrag})}`} style={dragLayoutStyle} onClick={this.handleLayoutClick}>
+      <div className={`DragLayout ${classNames({ disableDrag })}`} style={dragLayoutStyle} onMouseDown={this.handleLayoutClick}>
         {map(children, (child) => {
           return React.cloneElement(
             child,
@@ -106,35 +132,6 @@ export default class DragLayout extends PureComponent {
           )
         })}
         {this.renderOverlapLines()}
-      </div>
-    )
-  }
-
-  renderOverlapLines() {
-    const { layoutWidth, layoutHeight, scale } = this.props
-    const { overlapLines, draggingId} = this.state
-
-    const linesX = map(overlapLines.x, (line, index) => (
-      <div
-        key={index}
-        className='overlapLine'
-        style={{width: '0px', height: `${layoutHeight}px`, left: `${line * scale}px`}}
-      >
-      </div>
-    ))
-    const linesY = map(overlapLines.y, (line, index) => (
-      <div
-        key={index}
-        className='overlapLine'
-        style={{width: `${layoutWidth}px`, height: '0px', top: `${line * scale}px`}}
-      >
-      </div>
-    ))
-    
-    return (
-      <div className='overlapLines'>
-        {linesX}
-        {linesY}
       </div>
     )
   }

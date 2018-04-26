@@ -268,13 +268,13 @@ const getSnapLinesOfDom = (width, height, left, top) => {
 }
 
 const getSiblingElements = (dom) => {
-	let siblingElements = []
+  let siblingElements = []
 
   let preElement = dom.previousSibling
-	while (!isNull(preElement)) {
-		siblingElements = [...siblingElements, preElement]
+  while (!isNull(preElement)) {
+    siblingElements = [...siblingElements, preElement]
     preElement = preElement.previousSibling
-	}
+  }
 
   let nextElement = dom.nextSibling
   while (!isNull(nextElement)) {
@@ -282,5 +282,5 @@ const getSiblingElements = (dom) => {
     nextElement = nextElement.nextSibling
   }
 
-	return siblingElements
+  return siblingElements
 }

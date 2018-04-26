@@ -35,6 +35,10 @@ module.exports = {
         "comma-dangle": ["error", "never"],
         "eol-last": 0,
         "react/forbid-prop-types": 0,
+        "object-curly-newline": 0,
+        'quotes': 0,
+        'jsx-a11y/no-noninteractive-tabindex': 0,
         "import/prefer-default-export": 0,
+        'react/require-default-props': 0,
     }
 };
