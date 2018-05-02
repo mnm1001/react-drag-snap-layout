@@ -40,5 +40,8 @@ module.exports = {
         'jsx-a11y/no-noninteractive-tabindex': 0,
         "import/prefer-default-export": 0,
         'react/require-default-props': 0,
+        'no-mixed-operators': 0,
+        'no-shadow': 0,
+        'no-use-before-define': 0
     }
 };

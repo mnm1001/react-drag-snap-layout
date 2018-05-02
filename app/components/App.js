@@ -3,25 +3,22 @@ import 'styles/app.less'
 import DragLayout from 'components/DragLayout'
 import { loadMockData } from 'api/api'
 import { map } from 'lodash'
-import MoveAndResizeWrapper from 'components/DragLayout/MoveAndResizeWrapper';
-import { Divider } from 'antd';
+import MoveAndResizeWrapper from 'components/DragLayout/MoveAndResizeWrapper'
 
 export default class App extends Component {
   componentWillMount() {
     const itemsData = loadMockData()
-    this.setState({ 
-      itemsData,
+    this.setState({
+      itemsData
     })
   }
-  
+
   handleChangePosition = (postion) => {
-    console.log('handleChangePosition', postion);
+    console.log('handleChangePosition', postion)
   }
 
   render() {
     const { itemsData } = this.state
-    const dragLayoutProps = {
-    }
 
     return (
       <div className='app'>

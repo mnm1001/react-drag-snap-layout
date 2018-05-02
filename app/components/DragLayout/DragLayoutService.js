@@ -32,7 +32,7 @@ export const addMoveListener = (wrapperDom, dragHandleClassName, wrapperDomOptio
       wrapperDom.style.top = `${newDomTop * scale}px`
 
       changeOverlapLines(linesArray, oldPosition.width, oldPosition.height, newDomLeft, newDomTop, onChangeOverlapLines)
-      onChangePosition(id, {width: oldPosition.width, height: oldPosition.height, left: newDomLeft, top: newDomTop})
+      onChangePosition(id, { width: oldPosition.width, height: oldPosition.height, left: newDomLeft, top: newDomTop })
     }
     document.onmouseup = () => {
       documentMouseUp(id, onEndDragging, onChangeOverlapLines)
@@ -89,7 +89,7 @@ export const addResizeListener = (dragDom, resizeHandleDom, wrapperDomOption, la
       dragDom.style.top = `${newDomTop * scale}px`
 
       changeOverlapLines(linesArray, newDomWidth, newDomHeight, newDomLeft, newDomTop, onChangeOverlapLines)
-      onChangePosition(id, {width: newDomWidth, height: newDomHeight, left: newDomLeft, top: newDomTop})
+      onChangePosition(id, { width: newDomWidth, height: newDomHeight, left: newDomLeft, top: newDomTop })
     }
     document.onmouseup = (e) => {
       e.stopPropagation()
@@ -118,7 +118,7 @@ const getNewPositionOfRight = (oldPosition, mouseMoveX, layoutOption, wrapperDom
   if (newDomWidth < wrapperDomOption.minWidth) newDomWidth = wrapperDomOption.minWidth
   if (newDomWidth + oldPosition.left > layoutOption.layoutWidth) newDomWidth = layoutOption.layoutWidth - oldPosition.left
 
-  return {width: newDomWidth}
+  return { width: newDomWidth }
 }
 
 const getNewPositionOfDown = (oldPosition, mouseMoveY, layoutOption, wrapperDomOption, linesArray) => {
@@ -132,7 +132,7 @@ const getNewPositionOfDown = (oldPosition, mouseMoveY, layoutOption, wrapperDomO
   newDomHeight = newDomHeight - snapDistanceY
   if (newDomHeight < wrapperDomOption.minHeight) newDomHeight = wrapperDomOption.minHeight
   if (newDomHeight + oldPosition.top > layoutOption.layoutHeight) newDomHeight = layoutOption.layoutHeight - oldPosition.top
-  return {height: newDomHeight}
+  return { height: newDomHeight }
 }
 
 const getNewPositionOfLeft = (oldPosition, mouseMoveX, layoutOption, wrapperDomOption, linesArray) => {
@@ -156,7 +156,7 @@ const getNewPositionOfLeft = (oldPosition, mouseMoveX, layoutOption, wrapperDomO
     newDomLeft = oldPosition.right - wrapperDomOption.minWidth
   }
 
-  return {width: newDomWidth, left: newDomLeft}
+  return { width: newDomWidth, left: newDomLeft }
 }
 
 const getNewPositionOfUp = (oldPosition, mouseMoveY, layoutOption, wrapperDomOption, linesArray) => {
@@ -180,7 +180,7 @@ const getNewPositionOfUp = (oldPosition, mouseMoveY, layoutOption, wrapperDomOpt
     newDomTop = oldPosition.bottom - wrapperDomOption.minHeight
   }
 
-  return {height: newDomHeight, top: newDomTop}
+  return { height: newDomHeight, top: newDomTop }
 }
 
 
@@ -198,12 +198,12 @@ const changeOverlapLines = (linesArray, width, height, left, top, onChangeOverla
   const newDomLines = getSnapLinesOfDom(width, height, left, top)
   const overlapLinesX = getOverlapLines(linesArray.x, newDomLines.x)
   const overlapLinesY = getOverlapLines(linesArray.y, newDomLines.y)
-  onChangeOverlapLines({x: overlapLinesX, y: overlapLinesY})
+  onChangeOverlapLines({ x: overlapLinesX, y: overlapLinesY })
 }
 
 const documentMouseUp = (id, onEndDragging, onChangeOverlapLines) => {
   onEndDragging(id)
-  onChangeOverlapLines({x: [], y: []})
+  onChangeOverlapLines({ x: [], y: [] })
   document.onmousemove = null
   document.onmouseup = null
 }
@@ -237,8 +237,9 @@ const getSnapDistance = (linesArray, linesOfDom) => {
       if (inRange(domLine, snapLine - snapGap, snapLine + snapGap)) {
         if (isUndefined(tempSnapGap)) {
           tempSnapGap = domLine - snapLine
-        } else if (Math.abs(domLine - snapLine) < Math.abs(tempSnapGap))
+        } else if (Math.abs(domLine - snapLine) < Math.abs(tempSnapGap)) {
           tempSnapGap = domLine - snapLine
+        }
       }
     })
   })
@@ -248,7 +249,7 @@ const getSnapDistance = (linesArray, linesOfDom) => {
 
 const getSiblingElementsLines = (dom, scale) => {
   const siblingElements = getSiblingElements(dom)
-  let linesArray = {x: [], y:[]}
+  const linesArray = { x: [], y: [] }
   forEach(siblingElements, (element) => {
     const position = getDomPosition(element, scale)
     const linesOfDom = getSnapLinesOfDom(position.width, position.height, position.left, position.top)
@@ -256,7 +257,7 @@ const getSiblingElementsLines = (dom, scale) => {
     linesArray.y = [...linesArray.y, ...linesOfDom.y]
   })
 
-  return {x: uniq(linesArray.x), y: uniq(linesArray.y)}
+  return { x: uniq(linesArray.x), y: uniq(linesArray.y) }
 }
 
 const getSnapLinesOfDom = (width, height, left, top) => {
@@ -264,7 +265,7 @@ const getSnapLinesOfDom = (width, height, left, top) => {
   const right = left + width
   const middle = top + height / 2
   const bottom = top + height
-  return {x: [left, center, right], y: [top, middle, bottom]}
+  return { x: [left, center, right], y: [top, middle, bottom] }
 }
 
 const getSiblingElements = (dom) => {
