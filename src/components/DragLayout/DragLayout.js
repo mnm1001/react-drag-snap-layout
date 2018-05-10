@@ -1,7 +1,7 @@
+import { map } from 'lodash'
 import React, { PureComponent } from 'react'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
-import { map } from 'lodash'
 import './DragLayout.less'
 
 export default class DragLayout extends PureComponent {
@@ -37,6 +37,7 @@ export default class DragLayout extends PureComponent {
   }
 
   constructor(props) {
+    map()
     super(props)
     this.handleStartDragging = this.handleStartDragging.bind(this)
     this.handleEndDragging = this.handleEndDragging.bind(this)

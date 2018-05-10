@@ -1,19 +1,19 @@
 const path = require('path')
 
 module.exports = {
-  entry: path.join(__dirname, '../app/index.js'),
+  entry: path.join(__dirname, '../src/index.js'),
   output: {
-    path: path.join(__dirname, '../app/'),
+    path: path.join(__dirname, '../src/'),
     filename: 'bundle.js'
   },
   resolve: {
     alias: {
-      api: path.join(__dirname, '../app/api'),
-      components: path.join(__dirname, '../app/components'),
-      constants: path.join(__dirname, '../app/constants'),
-      services: path.join(__dirname, '../app/services'),
-      styles: path.join(__dirname, '../app/styles'),
-      utils: path.join(__dirname, '../app/utils')
+      api: path.join(__dirname, '../src/api'),
+      components: path.join(__dirname, '../src/components'),
+      constants: path.join(__dirname, '../src/constants'),
+      services: path.join(__dirname, '../src/services'),
+      styles: path.join(__dirname, '../src/styles'),
+      utils: path.join(__dirname, '../src/utils')
     },
     extensions: ['.js', '.jsx', '.less']
   },
@@ -47,8 +47,8 @@ module.exports = {
     ]
   },
   devServer: {
-    contentBase: path.join(__dirname, '../app/'),
-    publicPath: '/app/',
+    contentBase: path.join(__dirname, '../src/'),
+    publicPath: '/src/',
     port: 3333,
     inline: true
   },

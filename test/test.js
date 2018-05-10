@@ -1,4 +1,4 @@
-import services from '../app/services/services'
+import services from '../src/services/services'
 import { expect } from 'chai'
 
 describe('services', function() {
